@@ -20,10 +20,10 @@ jobs:
         include:
           # - platforms: linux/arm/v6
           #   balena_arch: rpi
-          - platforms: linux/arm/v7
-            balena_arch: armv7hf
-          # - platforms: linux/arm64
-          #   balena_arch: aarch64
+          # - platforms: linux/arm/v7
+          #   balena_arch: armv7hf
+          - platforms: linux/arm64
+            balena_arch: aarch64
           - platforms: linux/amd64
             balena_arch: amd64
     permissions:
