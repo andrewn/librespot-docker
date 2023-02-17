@@ -10,7 +10,7 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
-  deploy-to-ghcr:
+  build:
     runs-on: ubuntu-20.04
 
     # Specify BALENA_ARCH for each platform
@@ -85,3 +85,26 @@ jobs:
           provenance: false
           # cache-from: type=gha
           # cache-to: type=gha,mode=max
+
+  build-multi-architecture:
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/metadata-action@v4
+        id: metadata
+        with:
+          images: ghcr.io/${{ github.repository }}
+      - uses: int128/docker-manifest-create-action@v1
+        with:
+          tags: ${{ steps.metadata.outputs.tags }}
+          suffixes: |
+            -linux-amd64
+            -linux-arm64
