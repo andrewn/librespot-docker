@@ -66,8 +66,10 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.GHCR_IMAGE_NAME }}
-          flavor: |
-            latest=true
+          # flavor: |
+          #   latest=true
+          # avoid overwriting the latest tag because metadata-action does not add a suffix to it
+          flavor: latest=false,suffix=-${{ matrix.platform }}
           tags: |
             type=semver,pattern={{version}}
 
