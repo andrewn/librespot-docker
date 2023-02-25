@@ -6,16 +6,29 @@ WORKDIR /app
 
 ARG LIBRESPOT_VERSION=0.4.2
 
-RUN install_packages alsa-lib-dev pulseaudio-dev cargo curl
+RUN install_packages alsa-lib-dev pulseaudio-dev curl rustup build-base
+
+ENV CARGO_HOME=/app/cargo
+ENV RUSTFLAGS="-C target-feature=-crt-static"
+
+# Nightly toolchain for sparse-registry feature
+# See: https://github.com/rust-lang/cargo/issues/10781#issuecomment-1163829239
+# SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+# RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain beta
+
+RUN rustup-init -y --default-toolchain beta
+
+ENV PATH="${CARGO_HOME}/bin:${PATH}"
+
+# Use sparse-registry for memory savings
+# See: https://github.com/rust-lang/cargo/issues/10781#issuecomment-1163829239
+ENV CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse
 
 RUN curl -sL "https://github.com/librespot-org/librespot/archive/refs/tags/v${LIBRESPOT_VERSION}.tar.gz" --output librespot.tar.gz && \
   mkdir /app/librespot-src && \
   tar -zxvf librespot.tar.gz --directory /app/librespot-src --strip-components=1
 
 WORKDIR /app/librespot-src
-
-ENV CARGO_HOME=/app/cargo
-ENV RUSTFLAGS="-C target-feature=-crt-static"
 
 RUN cargo build \
   --release \
