@@ -6,14 +6,14 @@ WORKDIR /app
 
 ARG LIBRESPOT_VERSION=0.4.2
 
-RUN install_packages alsa-lib-dev pulseaudio-dev curl rustup build-base
+RUN install_packages alsa-lib-dev pulseaudio-dev curl build-base
 
 ENV CARGO_HOME=/app/cargo
 ENV RUSTFLAGS="-C target-feature=-crt-static"
 
 # beta toolchain for sparse-registry feature (rust v1.68)
 # See: https://github.com/rust-lang/cargo/issues/10781#issuecomment-1163829239
-RUN rustup-init -y --default-toolchain beta
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain beta
 
 ENV PATH="${CARGO_HOME}/bin:${PATH}"
 
