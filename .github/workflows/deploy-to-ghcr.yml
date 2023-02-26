@@ -18,10 +18,10 @@ jobs:
     strategy:
       matrix:
         include:
-          # - platforms: linux/arm/v6
-          #   balena_arch: rpi
-          # - platforms: linux/arm/v7
-          #   balena_arch: armv7hf
+          - platforms: linux/arm/v6
+            balena_arch: rpi
+          - platforms: linux/arm/v7
+            balena_arch: armv7hf
           - platforms: linux/arm64
             balena_arch: aarch64
           - platforms: linux/amd64
@@ -34,11 +34,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Workaround cargo error failing build
-      # https://github.com/marketplace/actions/docker-on-tmpfs
-      # Error: https://github.com/andrewn/librespot-docker/actions/runs/4121241814/jobs/7116738264#step:8:567
+      # # Workaround cargo error failing build
+      # # https://github.com/marketplace/actions/docker-on-tmpfs
+      # # Error: https://github.com/andrewn/librespot-docker/actions/runs/4121241814/jobs/7116738264#step:8:567
       # - name: Run Docker on tmpfs
       #   uses: JonasAlfredsson/docker-on-tmpfs@v1
+      #   if: ${{ matrix.platforms == 'linux/arm/v7' }}
       #   with:
       #     tmpfs_size: 5
       #     swap_size: 4
